@@ -1,0 +1,46 @@
+baseurl: "/"
+languageCode: en-us
+title: Datanaut
+theme: pico
+author: Alexandre Negrel
+copyright: '&copy; 2021. All rights reserved.'
+canonifyurls: yes
+paginate: 10
+indexes:
+  tag: tags
+  topic: topics
+params:
+  brand: pico
+  dateFormat: 02 Jan 2006, 15:04
+  disqus: Your Disqus shortname
+  googleAnalytics: Your Google Analytics tracking ID
+  highlightjs: androidstudio
+  subtitle: A Hugo Theme
+menu:
+  main:
+    - identifier: home
+      name: Home
+      pre: <i class='fa fa-home fa-fw'></i>
+      url: /
+      weight: 1
+    - identifier: post
+      name: Posts
+      pre: <i class='fa fa-list fa-fw'></i>
+      url: /post/
+      weight: 2
+    - identifier: about
+      name: About
+      pre: <i class='fa fa-user fa-fw'></i>
+      url: /about/
+      weight: 3
+    - name: Contact
+      pre: <i class='fa fa-phone fa-fw'></i>
+      url: /contact/
+      weight: 4
+social:
+  facebook: '*'
+  github: n8owl
+  instagram: '*'
+  linkedin: '*'
+  stackoverflow: '*'
+  twitter: '*'

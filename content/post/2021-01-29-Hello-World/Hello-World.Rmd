@@ -1,0 +1,86 @@
+---
+title: "Hello World"
+author: "Ruzica Gajic"
+date: "1/29/2021"
+output: html_document
+---
+
+# Hello
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load packages and set wd, include=FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, covid19mobility, scales, blogdown)
+
+# Set work directory on PC
+setwd("/Users/ruzicagajic/Documents/Data Scientist/Projects")
+```
+
+```{r refresh apple data, echo=FALSE}
+
+df_apple_country <- refresh_covid19mobility_apple_country()
+#df_apple_city <- refresh_covid19mobility_apple_city()
+#df_apple_subregion <- refresh_covid19mobility_apple_subregion()
+
+```
+
+```{r samples, echo = FALSE}
+
+country <- "Sweden"
+countries <- c(country, "Norway", "Denmark")
+cities <- c("Stockholm", "Oslo", "Copenhagen")
+start <- as.Date(min(df_apple_country$date))
+end <- as.Date(max(df_apple_country$date))
+
+```
+
+```{r personalized text theme, echo=FALSE}
+
+my_text_theme <- theme(
+  plot.title = element_text(family = "Helvetica", face = "bold", size = (15)),
+  plot.subtitle = element_text(family = "Helvetica", size = (10)),
+  legend.position = "top",
+  legend.title = element_blank(),
+  legend.text = element_text(family = "Helvetica", colour="black", size = (10)),
+  axis.text = element_text(family = "Helvetica", colour = "black", size = (10)))
+
+theme_set(my_text_theme)
+
+```
+
+
+```{r apple sweden, echo=FALSE}
+
+plot1 <- df_apple_country %>%
+  filter(location %in% country) %>%
+  mutate(mobility_indicator = case_when(
+    str_detect(data_type, "driving") ~ "Driving",
+    str_detect(data_type, "transit") ~ "Commuting",
+    str_detect(data_type, "walking") ~ "Walking")
+    ) %>%
+  arrange(mobility_indicator) %>%
+  
+  ggplot(aes(x = date, y = (value/100-1)*100, color = mobility_indicator)) +
+  geom_line() +
+  theme_bw() +
+  my_text_theme +
+  
+  scale_x_date(expand = c(0,0), labels = date_format("%d %b %Y")) +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_color_manual(values=c("#003f5c", "#bc5090", "#ffa600")) +
+ 
+  labs(
+    title = paste("Apple's mobility index for", country),
+    subtitle = paste("Percentage change since", as.character(start, "%d %B %Y")),
+    caption = "Source: Apple, https://covid19.apple.com/mobility",
+    x = "",
+    y = ""
+  )
+
+plot1
+
+```
+<a href="https://covid19.apple.com/mobility">https://covid19.apple.com/mobility</a>
