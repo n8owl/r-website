@@ -3,12 +3,12 @@ date: "2021-02-05"
 title: "COVID-19 mobility trends by Apple"
 ---
 
-Challenge 1: Learn to use basic data visualisation with tidyverse
-Challenge 2: Get to know Apple's COVID-19 mobility trend data
+**Challenge 1: Learn to use basic data visualisation with tidyverse**
+**Challenge 2: Get to know Apple's COVID-19 mobility trend data**
 
-During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is  [**Apple's mobility trend data**](https://covid19.apple.com/mobility), which the tech-giant released to the public in March 2020. (Shortly after [**Google**](https://www.google.com/covid19/mobility/) also released their mobility data which I will dive into in an upcoming post).
+During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is [**Apple's**](https://covid19.apple.com/mobility) mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after [**Google**](https://www.google.com/covid19/mobility/) also released their mobility trend data which I will dive into in an upcoming post).
 
-Most of my previous coding experience has mostly been done in order to manipulate and wrangle data or arrive to a numeric result produced to an csv-file that was to serve as in input to another program. Hence, my expereince of visualising data (nicely) for presentations or reports is close to non-existent. The challenge for me in this post is to learn to visualize data using [**RMarkdown**](https://rmarkdown.rstudio.com/) and the package [**tidyverse**](https://www.tidyverse.org/).
+Most of my previous coding experience was mostly performed in order to wrangle data or using statistical methods to arrive to a numeric result produced to an csv-file that in turn was to serve as input to another program. Hence, my expereince of visualising data for presentations or reports is close to non-existent. The challenge for me in this post is to learn to visualize data using [**RMarkdown**](https://rmarkdown.rstudio.com/) and the package [**tidyverse**](https://www.tidyverse.org/).
 
 
 ```{r setup, include=FALSE}
@@ -32,12 +32,12 @@ I start by loading the data:
 df_apple_country <- refresh_covid19mobility_apple_country()
 df_apple_city <- refresh_covid19mobility_apple_city()
 
-# Use the code below to access Apple's mobilty trend data for subregions of countries. 
+# Use the code below to load Apple's mobilty trend data for subregions of countries to a data frame
 # I will be using the data on subregions in a future post.
 # df_apple_subregion <- refresh_covid19mobility_apple_subregion()
 ```
 
-Then I assign values to varaibles in order to faciitate the process of altering the city or country of interest:
+Then I assign values to variables in order to faciitate the process of altering the city or country of interest:
 
 ```{r}
 # Assign the country/city/region you are interested in to variables
@@ -97,13 +97,14 @@ plot1 <- df_apple_country %>%
 plot1
 
 ```
+I found the folowing page on the website [www.learnui.design](https://learnui.design/tools/data-color-picker.html#palette) very useful when searching for colours to use in the plots (that work with color-blindness and look good in both light and dark theme).
 
 Next, I want to compare the mobility indicators for Sweden to those of neighboring Denmark and Norway by facetting the plot:
 
 ```{r}
 
 plot2 <- df_apple_country %>%
-  filter(location %in% countries) %>%
+  filter(location %in% countries) %>%   # filter using the list of countries
   mutate(mobility_indicator = case_when(
     str_detect(data_type, "driving") ~ "Driving",
     str_detect(data_type, "transit") ~ "Public transport",
@@ -128,7 +129,7 @@ plot2 <- df_apple_country %>%
     y = ""
   ) + 
   
-  facet_grid(rows = vars(location)) + #facet by rows
+  facet_grid(rows = vars(location)) + # facet by rows
   theme(strip.placement = "outside")
 
 plot2
@@ -147,7 +148,7 @@ plot3 <- df_apple_country %>%
     ) %>%
   arrange(mobility_indicator) %>%
   
-  ggplot(aes(x = date, y = (value/100 -1)*100, color = location)) +  # I change the color to 'location'
+  ggplot(aes(x = date, y = (value/100 -1)*100, color = location)) +  # I change the color aesthetic to 'location'
   geom_line() +
   theme_bw() +
   my_text_theme +
@@ -164,7 +165,7 @@ plot3 <- df_apple_country %>%
     y = ""
   ) + 
   
-  facet_grid(cols = vars(mobility_indicator)) + #facet by columns
+  facet_grid(cols = vars(mobility_indicator)) + # facet by columns
   theme(strip.placement = "outside")
 
 plot3
@@ -176,7 +177,7 @@ Next, I am curious to see whether the big uptick in driving during the summer of
 ```{r}
 
 plot4 <- df_apple_city %>%
-  filter(location %in% cities[1]) %>%
+  filter(location %in% cities[1]) %>%   # filter using the first city in the list 'cities'
   mutate(mobility_indicator = case_when(
     str_detect(data_type, "driving") ~ "Driving",
     str_detect(data_type, "transit") ~ "Public transport",
@@ -186,12 +187,12 @@ plot4 <- df_apple_city %>%
   
   ggplot(aes(x = date, y = (value/100-1)*100, color = mobility_indicator)) +
   geom_line() +
-  theme_bw() +
+  theme_grey() +   # trying another theme
   my_text_theme +
   
   scale_x_date(expand = c(0,0), labels = date_format("%d %b %Y")) +
   scale_y_continuous(expand = c(0,0)) +
-  scale_color_manual(values=c("#003f5c", "#bc5090", "#ffa600")) +
+  scale_color_viridis_d(option = "D") +   # trying another color, 5 options A - E are available
   
   labs(
     title = paste("Apple's mobility index for", cities[1]),
@@ -205,82 +206,9 @@ plot4
 
 ```
 
-The plot shows no uptick in the mobility indicator "driving" in Stockholm, so the big lift must have happened in the rest of the country. Next I want to compare Stockholm to the capitals of Denmark (Copenhagen) and Norway (Oslo):
+The plot shows no uptick in the mobility indicator "driving" in Stockholm, so the big lift must have happened in the rest of the country. Next, I want to compare Stockholm to the capitals of Denmark (Copenhagen) and Norway (Oslo). I want to visualise both all three capitals and countries in one single plot:
 
-```{r, echo=FALSE}
-
-plot5 <- df_apple_city %>%
-  filter(location %in% cities) %>%
-  mutate(mobility_indicator = case_when(
-    str_detect(data_type, "driving") ~ "Driving",
-    str_detect(data_type, "transit") ~ "Public transport",
-    str_detect(data_type, "walking") ~ "Walking")
-    ) %>%
-  arrange(mobility_indicator) %>%
-  
-  ggplot(aes(x = date, y = (value/100 -1)*100, color = mobility_indicator)) +
-  geom_line() +
-  theme_bw() +
-  my_text_theme +
-  
-  scale_x_date(expand = c(0,0), labels = date_format("%b %y")) +
-  scale_y_continuous(expand = c(0,0)) +
-  scale_color_manual(values=c("#003f5c", "#bc5090", "#ffa600")) +
-
-  labs(
-    title = paste("Comparing Apple's mobility index for", cities[1], "to other capitals"),
-    subtitle = paste("Percentage change in routing requests since", as.character(start, "%d %B %Y")),
-    caption = "Source: Apple, https://covid19.apple.com/mobility",
-    x = "",
-    y = ""
-  ) + 
-  
-  facet_grid(rows = vars(location)) +
-  theme(strip.placement = "outside")
-
-plot5
-```
-
-
-
-```{r, echo=FALSE}
-
-plot6 <- df_apple_city %>%
-  filter(location %in% cities) %>%
-  mutate(mobility_indicator = case_when(
-    str_detect(data_type, "driving") ~ "Driving",
-    str_detect(data_type, "transit") ~ "Public transport",
-    str_detect(data_type, "walking") ~ "Walking")
-    ) %>%
-  arrange(mobility_indicator) %>%
-  
-  ggplot(aes(x = date, y = (value/100 -1)*100, color = location)) +
-  geom_line() +
-  theme_bw() +
-  my_text_theme +
-  
-  scale_x_date(expand = c(0,0), labels = date_format("%b %y")) +
-  scale_y_continuous(expand = c(0,0)) +
-  scale_color_manual(values=c("#003f5c", "#bc5090", "#ffa600")) +
-
-  labs(
-    title = paste("Comparing Apple's mobility index for", cities[1], "to other capitals"),
-    subtitle = paste("Percentage change in routing requests since", as.character(start, "%d %B %Y")),
-    caption = "Source: Apple, https://covid19.apple.com/mobility",
-    x = "",
-    y = ""
-  ) + 
-  
-  facet_grid(cols = vars(mobility_indicator)) +
-  theme(strip.placement = "outside")
-
-plot6
-
-```
-
-Next, I want to visualise both all three capitals and countries in one single plot:
-
-```{r comparison capitals and countries, echo=FALSE}
+```{r}
 
 capital_and_country <- c("Stockholm", "Copenhagen", "Oslo", "Sweden", "Denmark", "Norway")
 
@@ -306,7 +234,7 @@ joined_country_city <- rbind(join_country, join_city)
 joined_country_city$location <- factor(joined_country_city$location, levels = capital_and_country)
 
 # Create facet wrap first with "old" order
-plot7 <- joined_country_city %>%
+plot5 <- joined_country_city %>%
   filter(location %in% capital_and_country) %>%
   ggplot(aes(x = date, y = (value/100 -1)*100, color = mobility_indicator)) +
   geom_line() +
@@ -328,12 +256,12 @@ plot7 <- joined_country_city %>%
   facet_wrap(facets = vars(location))
   
 # Add new order to facet wrap
-plot7 + facet_wrap(~ location) 
+plot5 + facet_wrap(~ location) 
 ```
 
-And last but not least, I want to compare the mobility trend indicators for Sweden to the three biggest cities in the country: 1. [**Stockholm**](https://en.wikipedia.org/wiki/Stockholm), 2. [**Gothenburg**](https://en.wikipedia.org/wiki/Gothenburg) and 3. [**Malmö**](https://en.wikipedia.org/wiki/Malm%C3%B6). Oddly, the city Malmö is spelled using the Swedish letter "ö" in the Apple data, while Gothenburg (in Swedish: Göteborg) is spelled in English "Gothenburg". Interesting, I wonder why that is?
+And last but not least, I want to compare the mobility trend indicators for Sweden to the three biggest cities in the country: 1. Stockholm, Gothenburg and Malmö. Oddly, the city Malmö is spelled using the Swedish letter "ö" in the Apple data, while Gothenburg (in Swedish: Göteborg) is spelled in English "Gothenburg". Interesting, I wonder why that is?
 
-```{r comparison sweden internal, echo=FALSE}
+```{r}
 
 sweden_cities <- c("Sweden", "Stockholm", "Gothenburg", "Malmö")
 
@@ -359,7 +287,7 @@ joined_country_city <- rbind(join_country, join_city)
 joined_country_city$location <- factor(joined_country_city$location, levels = sweden_cities)
 
 # Create facet wrap first with "old" order
-plot8 <- joined_country_city %>%
+plot6 <- joined_country_city %>%
   filter(location %in% sweden_cities) %>%
   ggplot(aes(x = date, y = (value/100 -1)*100, color = mobility_indicator)) +
   geom_line() +
@@ -371,7 +299,7 @@ plot8 <- joined_country_city %>%
   scale_color_manual(values=c("#003f5c", "#bc5090", "#ffa600")) +
 
   labs(
-    title = paste("Comparing Apple's mobility index for", sweden_cities[1], "and it's biggest cities"),
+    title = paste("Comparing Apple's mobility index for", sweden_cities[1], "and it's cities"),
     subtitle = paste("Percentage change in routing requests since", as.character(start, "%d %B %Y")),
     caption = "Source: Apple, https://covid19.apple.com/mobility",
     x = "",
@@ -381,7 +309,7 @@ plot8 <- joined_country_city %>%
   facet_wrap(facets = vars(location))
   
 # Add new order to facet wrap
-plot8 + facet_wrap(~ location)
+plot6 + facet_wrap(~ location)
 ```
 
-That was all for now! Omg, there were so many more possibilities available for tweaking plots when using ggplot2 in tidyverse than I expected. I really had to spend quite some time online reading documentation and checking examples. The possibilites are truely immense so please see the above as a glimpse into the world of tidy! I can warmly recommend the folowing page on the website [**datacarpentry.org**](https://datacarpentry.org/R-ecology-lesson/04-visualization-ggplot2) that I found particularly useful for the type of data used in this post.
+That was all for now! Omg, there were so many more possibilities available for tweaking the plots when using ggplot2 in tidyverse than I expected. I really had to spend quite some time online reading documentation and checking examples. The possibilites are truely immense so please see the examples above as a glimpse into the world of tidy! I can warmly recommend the folowing page on the website [**www.datacarpentry.org**](https://datacarpentry.org/R-ecology-lesson/04-visualization-ggplot2) that I found particularly useful.
