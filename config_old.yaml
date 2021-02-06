@@ -20,7 +20,10 @@ menu:
       url: /about/
     - name: Resume
       url: /resume/
+#pygmentsUseClasses: true  # use class names instead of directly inserting color codes
+#pygmentsCodeFences: true  # enable GitHub style code snippets
 params:
+  #highlight: true
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
   description: A website built through Hugo and blogdown.
