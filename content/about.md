@@ -11,4 +11,4 @@ I would like to ask you for a big favour. Please do not e-mail me asking for any
 
 The posts you’ll find here will mostly be in English, however Swedish or Spanish might occur. Feel free to contact me by [**LinkedIn**](https://www.linkedin.com/in/ruzica-gajic/).
 
-This blog was created using the R [**blogdown**](https://github.com/rstudio/blogdown) package. The theme was forked from [@LukasJoswiak/etch](https://github.com/LukasJoswiak/etch) and later modified by me to better suit my needs.
+This blog was created using the R [**blogdown**](https://github.com/rstudio/blogdown) package. I found the article on [**www.storybench.org**](https://www.storybench.org/how-to-build-a-website-with-blogdown-in-r/) very useful when setting up the infrastructure for my website. The theme was forked from [@LukasJoswiak/etch](https://github.com/LukasJoswiak/etch) and later modified by me to better suit my needs.

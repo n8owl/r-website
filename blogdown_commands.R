@@ -1,5 +1,6 @@
 
 library(blogdown)
+setwd("/Users/ruzicagajic/Documents/Data Scientist/r-website/r-website/content/post/2021-02-05 COVID-19 mobility trends by Apple")
 
 blogdown::hugo_version()
 blogdown::update_hugo()
