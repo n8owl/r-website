@@ -1,23 +1,30 @@
 ---
 date: "2021-02-05"
 title: "COVID-19 mobility trends by Apple"
+includeSubheader: true
+tags: ["COVID-19", "R", "Mobility"]
 ---
 
 
 
-<p><strong>Challenge 1: Learn to use basic data visualisation with tidyverse</strong>
-<strong>Challenge 2: Get to know Apple’s COVID-19 mobility trend data</strong></p>
-<p>During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is <a href="https://covid19.apple.com/mobility"><strong>Apple’s</strong></a> mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after <a href="https://www.google.com/covid19/mobility/"><strong>Google</strong></a> also released their mobility trend data which I will dive into in an upcoming post).</p>
+<p><strong>Challenge 1: Learn to use basic data visualisation with tidyverse</strong> <strong>Challenge 2: Get to know Apple's COVID-19 mobility trend data</strong></p>
+<p>During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is <a href="https://covid19.apple.com/mobility"><strong>Apple's</strong></a> mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after <a href="https://www.google.com/covid19/mobility/"><strong>Google</strong></a> also released their mobility trend data which I will dive into in an upcoming post).</p>
 <p>Most of my previous coding experience was mostly performed in order to wrangle data or use statistical methods to arrive to a numeric result that I would export to a csv-file that in turn would serve as an input to another program. Hence, my expereince of visualising data for presentations or reports is close to non-existent. The biggest challenge for me in this post is to learn to visualize data using <a href="https://rmarkdown.rstudio.com/"><strong>RMarkdown</strong></a> and the package <a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a>.</p>
-<p>The mobility trend data from both Apple and Google is available in the R <a href="https://github.com/Covid19R/covid19mobility"><strong>covid19mobility</strong></a> package. Apple’s data is published daily and “reflects requests for directions in Apple Maps” since 13 January 2020 for countries, cities and subregions.</p>
+<p>The mobility trend data from both Apple and Google is available in the R <a href="https://github.com/Covid19R/covid19mobility"><strong>covid19mobility</strong></a> package. Apple's data is published daily and &quot;reflects requests for directions in Apple Maps&quot; since 13 January 2020 for countries, cities and subregions.</p>
 <p>I start by loading the data:</p>
-<pre class="r"><code># Load Apple&#39;s country and city data and add it to a data frame
-df_apple_country &lt;- refresh_covid19mobility_apple_country()
-df_apple_city &lt;- refresh_covid19mobility_apple_city()
-
-# Use the code below to load Apple&#39;s mobilty trend data for subregions of countries to a data frame
-# I will be using the data on subregions in a future post.
-# df_apple_subregion &lt;- refresh_covid19mobility_apple_subregion()</code></pre>
+<p>{{<highlight r>}} # Load Apple's country and city data and add it to a data frame df_apple_country &lt;- refresh_covid19mobility_apple_country() df_apple_city &lt;- refresh_covid19mobility_apple_city()</p>
+<div id="use-the-code-below-to-load-apples-mobilty-trend-data-for-subregions-of-countries-to-a-data-frame" class="section level1">
+<h1>Use the code below to load Apple's mobilty trend data for subregions of countries to a data frame</h1>
+</div>
+<div id="i-will-be-using-the-data-on-subregions-in-a-future-post." class="section level1">
+<h1>I will be using the data on subregions in a future post.</h1>
+</div>
+<div id="df_apple_subregion---refresh_covid19mobility_apple_subregion" class="section level1">
+<h1>df_apple_subregion &lt;- refresh_covid19mobility_apple_subregion()</h1>
+</div>
+<div id="hi" class="section level1">
+<h1>HI</h1>
+<p>{{</highlight>}}</p>
 <p>Then I assign values to variables in order to faciitate the process of altering the city or country of interest:</p>
 <pre class="r"><code># Assign the country/city/region you are interested in to variables
 country &lt;- &quot;Sweden&quot;
@@ -40,9 +47,9 @@ theme_set(my_text_theme)</code></pre>
 <p>The data is very easy to use.</p>
 <ol style="list-style-type: decimal">
 <li>I start by filtering out the mobility trend data for the country Sweden.</li>
-<li>Then I add a mobility indicator based on the string variable ‘data_type’.</li>
-<li>I sort the data by the new variable ‘mobility_indicator’.</li>
-<li>Finally, I visualise Apple’s three mobility trend indicators (driving, public transport and walking) for Sweden in a plot.</li>
+<li>Then I add a mobility indicator based on the string variable 'data_type'.</li>
+<li>I sort the data by the new variable 'mobility_indicator'.</li>
+<li>Finally, I visualise Apple's three mobility trend indicators (driving, public transport and walking) for Sweden in a plot.</li>
 </ol>
 <p>I notice quite a big increase in driving during the summer months:</p>
 <pre class="r"><code>plot1 &lt;- df_apple_country %&gt;%
@@ -72,8 +79,7 @@ theme_set(my_text_theme)</code></pre>
   )
 
 plot1</code></pre>
-<p><img src="/post/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-4-1.png" width="672" />
-I found the following page on the website <a href="https://learnui.design/tools/data-color-picker.html#palette"><strong>www.learnui.design</strong></a> very useful when searching for colours to use in the plots (that both work well with color-blindness and look good in both light and dark theme).</p>
+<p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-4-1.png" width="672" /> I found the following page on the website <a href="https://learnui.design/tools/data-color-picker.html#palette"><strong>www.learnui.design</strong></a> very useful when searching for colours to use in the plots (that both work well with color-blindness and look good in both light and dark theme).</p>
 <p>Next, I want to compare the mobility indicators for Sweden to those of neighboring Denmark and Norway. I use facetting in order to visualise the individual plots for each country stacked on top of one another:</p>
 <pre class="r"><code>plot2 &lt;- df_apple_country %&gt;%
   filter(location %in% countries) %&gt;%   # filter using the list of countries
@@ -105,7 +111,7 @@ I found the following page on the website <a href="https://learnui.design/tools/
   theme(strip.placement = &quot;outside&quot;)
 
 plot2</code></pre>
-<p><img src="/post/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Next, instead of comparing three plots for each country, I want to compare three plots for each mobility indicator. I facet by columns (instead of by rows as above):</p>
 <pre class="r"><code>plot3 &lt;- df_apple_country %&gt;%
   filter(location %in% countries) %&gt;%
@@ -137,8 +143,8 @@ plot2</code></pre>
   theme(strip.placement = &quot;outside&quot;)
 
 plot3</code></pre>
-<p><img src="/post/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Next, I am curious to see whether the big uptick in driving during the summer of 2020 in Sweden was concentrated to Sweden’s capital Stockholm. Instead of using the same aesthetics as for the plot with data for Sweden, I play around a bit. Turns out there was no increase of driving in the Swedish capital during the summer:</p>
+<p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Next, I am curious to see whether the big uptick in driving during the summer of 2020 in Sweden was concentrated to Sweden's capital Stockholm. Instead of using the same aesthetics as for the plot with data for Sweden, I play around a bit. Turns out there was no increase of driving in the Swedish capital during the summer:</p>
 <pre class="r"><code>plot4 &lt;- df_apple_city %&gt;%
   filter(location %in% cities[1]) %&gt;%   # filter using the first city in the list &#39;cities&#39;
   mutate(mobility_indicator = case_when(
@@ -166,9 +172,8 @@ plot3</code></pre>
   )
 
 plot4</code></pre>
-<p><img src="/post/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-7-1.png" width="672" />
-I recommend that you check out the documentation of the package ggplot2 included in tidyverse, particularly the ‘Scales’ and ‘Aesthetics’ sections on the webpage <a href="https://ggplot2.tidyverse.org/reference/"><strong>www.ggplot2.tidyverse.org/</strong></a>. ggplot2 is a system for declaratively creating graphics, based on <a href="http://vita.had.co.nz/papers/layered-grammar.pdf"><strong>The Grammar of Graphics</strong></a>.</p>
-<p>Next, I want to compare the mobility trend indicators for Sweden to the three biggest cities in the country: 1. Stockholm, 2. Gothenburg and 3. Malmö. Oddly, the city Malmö is spelled using the Swedish letter “ö” in the Apple data, while Gothenburg (in Swedish: Göteborg) is spelled in English “Gothenburg”. Interesting, I wonder why that is? I also notice that there is no up swing in the mobility indicator ‘driving’ for any of the three cities, indicating that the big uptick in driving was performed outside the three biggest cities:</p>
+<p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-7-1.png" width="672" /> I recommend that you check out the documentation of the package ggplot2 included in tidyverse, particularly the 'Scales' and 'Aesthetics' sections on the webpage <a href="https://ggplot2.tidyverse.org/reference/"><strong>www.ggplot2.tidyverse.org/</strong></a>. ggplot2 is a system for declaratively creating graphics, based on <a href="http://vita.had.co.nz/papers/layered-grammar.pdf"><strong>The Grammar of Graphics</strong></a>.</p>
+<p>Next, I want to compare the mobility trend indicators for Sweden to the three biggest cities in the country: 1. Stockholm, 2. Gothenburg and 3. Malmö. Oddly, the city Malmö is spelled using the Swedish letter &quot;ö&quot; in the Apple data, while Gothenburg (in Swedish: Göteborg) is spelled in English &quot;Gothenburg&quot;. Interesting, I wonder why that is? I also notice that there is no up swing in the mobility indicator 'driving' for any of the three cities, indicating that the big uptick in driving was performed outside the three biggest cities:</p>
 <pre class="r"><code>sweden_cities &lt;- c(&quot;Sweden&quot;, &quot;Stockholm&quot;, &quot;Gothenburg&quot;, &quot;Malmö&quot;)
 
 join_country &lt;- df_apple_country %&gt;%
@@ -216,7 +221,7 @@ plot5 &lt;- joined_country_city %&gt;%
   
 # Add new order to facet wrap
 plot5 + facet_wrap(~ location)</code></pre>
-<p><img src="/post/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Next, I want to compare Stockholm to the capitals of Denmark (Copenhagen) and Norway (Oslo). I want to visualise both all three capitals and countries in one single plot:</p>
 <pre class="r"><code>capital_and_country &lt;- c(&quot;Stockholm&quot;, &quot;Copenhagen&quot;, &quot;Oslo&quot;, &quot;Sweden&quot;, &quot;Denmark&quot;, &quot;Norway&quot;)
 
@@ -265,5 +270,6 @@ plot6 &lt;- joined_country_city %&gt;%
   
 # Add new order to facet wrap
 plot6 + facet_wrap(~ location) </code></pre>
-<p><img src="/post/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>That was all for now! Omg, there were so many more possibilities available for tweaking plots when using ggplot2 in tidyverse than I expected. I really had to spend quite some time online reading documentation and checking examples. The possibilites are truely immense so please see the examples above as a glimpse into the world of tidy! I can warmly recommend the folowing page on the website <a href="https://datacarpentry.org/R-ecology-lesson/04-visualization-ggplot2"><strong>www.datacarpentry.org</strong></a> that I found particularly useful.</p>
+</div>

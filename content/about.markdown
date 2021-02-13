@@ -3,6 +3,10 @@ date: "2021-02-04"
 title: About
 ---
 
+<div style="display:flex; justify-content:center;">
+<img src="/about/rosie.png" alt="alt text" style="width: 240px;">
+</div>
+
 My name is Ruzica Gajic and I'm an analyst working within the financial sector in Stockholm, Sweden. Prior to that I was the first employee of a start-up hedge fund as a portfolio manager for 5 years (mainly corporate bonds but also OTC derivatives). I'm an econ major but I've also studied a lot of statistics. Throughout my career I have worked with data in various quantities and forms, always with the aim to add value in my daily work. Starting October 2020 I have taken my interest in what is nowdays called "Data Science" to the next level and am currently working towards a certification as a Data Scientist with the primary aim to improve my analytic skills taking the step deeper into machine learning as well as entering the interesting world of deep learning. Also, I want to improve my presentation skills when it comes to analytics in order to better convey my often quite 'techy' findings.
 
 This is my personal blog about Data Science, R, Python and everything around it. Needless to say, opinions, analysis and conclusions are my own and no one elses. The work with all posts has been done outside work hours. With this blog I want to acheive two things. First, I want to keep my newly acquired skills fresh and dig deeper into areas of interest. Hence, I will be posting approximatly every fortnight about a topic I want to learn more about or that I find interesting in some way. Second, I want to have fun :) I love what I do and I'm a curious person and keen learner by nature, so keeping myself challenged intellectually is something I enjoy (to a certain extent of course, I also have a family and friends that I love to spend time with).

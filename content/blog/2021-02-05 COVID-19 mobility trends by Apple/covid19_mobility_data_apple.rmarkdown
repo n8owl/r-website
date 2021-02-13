@@ -1,6 +1,8 @@
 ---
 date: "2021-02-05"
 title: "COVID-19 mobility trends by Apple"
+includeSubheader: true
+tags: ["COVID-19", "R", "Mobility"]
 ---
 
 **Challenge 1: Learn to use basic data visualisation with tidyverse**
@@ -15,18 +17,17 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r load packages and set wd, include=FALSE}
-if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, covid19mobility)
 
 # Set work directory on PC
-setwd("/Users/ruzicagajic/Documents/Data Scientist/r-website/r-website/content/post/2021-02-05 COVID-19 mobility trends by Apple")
+setwd("/Users/ruzicagajic/Documents/Data Scientist/r-website/r-website/content/blog/2021-02-05 COVID-19 mobility trends by Apple")
 ```
 
 The mobility trend data from both Apple and Google is available in the R [**covid19mobility**](https://github.com/Covid19R/covid19mobility) package. Apple's data is published daily and "reflects requests for directions in Apple Maps" since 13 January 2020 for countries, cities and subregions.
 
 I start by loading the data:
 
-```{r}
+```{r, include=FALSE}
 # Load Apple's country and city data and add it to a data frame
 df_apple_country <- refresh_covid19mobility_apple_country()
 df_apple_city <- refresh_covid19mobility_apple_city()
@@ -35,6 +36,16 @@ df_apple_city <- refresh_covid19mobility_apple_city()
 # I will be using the data on subregions in a future post.
 # df_apple_subregion <- refresh_covid19mobility_apple_subregion()
 ```
+
+{{<highlight r>}}
+# Load Apple's country and city data and add it to a data frame
+df_apple_country <- refresh_covid19mobility_apple_country()
+df_apple_city <- refresh_covid19mobility_apple_city()
+
+# Use the code below to load Apple's mobilty trend data for subregions of countries to a data frame
+# I will be using the data on subregions in a future post.
+# df_apple_subregion <- refresh_covid19mobility_apple_subregion()
+{{</highlight>}}
 
 Then I assign values to variables in order to faciitate the process of altering the city or country of interest:
 

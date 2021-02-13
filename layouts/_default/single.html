@@ -1,0 +1,38 @@
+{{ define "main" }}
+<article>
+  <header id="post-header">
+    <h1>{{ .Title }}</h1>
+
+    {{ if .Params.includeSubheader }}
+      <div class="blog-subheader">
+        <div>
+          {{ if .Params.date }}
+            <span>{{ .Date.Format "2 January, 2006" }}</span>
+            {{ end }}
+          </div>
+
+          <div class="has-dot">
+            <a class="link" href="{{ .Site.Params.AuthorURL}}" target="_blank">
+              {{ .Site.Params.Author }}
+            </a>
+          </div>
+
+          <div class="has-dot">3 min read</div>
+          <div class="tags">
+            {{ range .Params.tags }}
+              <span class="tag">{{ . }}</span>
+            {{ end }}
+          </div>
+      </div>
+    {{ end }}
+
+
+
+
+    <!-- {{- if isset .Params "date" -}}
+    <time>{{ .Date.Format "January 2, 2006" }}</time>
+    {{- end -}} -->
+  </header>
+  {{- .Content -}}
+</article>
+{{ end }}
