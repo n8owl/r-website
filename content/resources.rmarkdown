@@ -9,7 +9,7 @@ title: Resources
 
 ### Text mining and natural language processing with R
 
-[**Text Mining with R: A Tidy Approach**](https://www.tidytextmining.com) 
+[**Text Mining with R: A Tidy Approach**](https://www.tidytextmining.com) by O'Reilly assumes the reader is at least slightly familiar with the R packages dplyr, ggplot2, and the %>% “pipe” operator.
 
 [**Text Analysis with R - For Students of Literature - Second Edition (2020)**](https://www.springer.com/gp/book/9783030396428) by author [**Matthew Jockers**](https://www.matthewjockers.net/) is quite good as a **complement** to O'Reilly's book mentioned above.
 

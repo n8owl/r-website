@@ -6,6 +6,8 @@ tags: ["COVID-19", "R", "Mobility"]
 ---
 
 **Challenge 1: Learn to use basic data visualisation with tidyverse**
+
+
 **Challenge 2: Get to know Apple's COVID-19 mobility trend data**
 
 During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is [**Apple's**](https://covid19.apple.com/mobility) mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after [**Google**](https://www.google.com/covid19/mobility/) also released their mobility trend data which I will dive into in an upcoming post).
