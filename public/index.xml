@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ruzica Gajic</title>
+    <link>/</link>
+    <description>Recent content on Ruzica Gajic</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 05 Feb 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>COVID-19 mobility trends by Apple</title>
+      <link>/covid-19-mobility-trends-by-apple/</link>
+      <pubDate>Fri, 05 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/covid-19-mobility-trends-by-apple/</guid>
+      <description>Challenge 1: Learn to use basic data visualisation with tidyverse
+Challenge 2: Get to know Apple&amp;rsquo;s COVID-19 mobility trend data
+During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is Apple&amp;rsquo;s mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after Google also released their mobility trend data which I will dive into in an upcoming post).</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Juan post</title>
+      <link>/juan-post/</link>
+      <pubDate>Fri, 05 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/juan-post/</guid>
+      <description>Challenge 1: Learn to use basic data visualisation with tidyverse Challenge 2: Get to know Apple&#39;s COVID-19 mobility trend data
+During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is Apple&#39;s mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after Google also released their mobility trend data which I will dive into in an upcoming post).</description>
+    </item>
+    
+    
+    
+    
+    
+    
+  </channel>
+</rss>

@@ -1,0 +1,81 @@
+---
+date: "2024-10-25"
+title: "Web scraping Swedish fund flow data using R"
+includeSubheader: true
+tags: ["Finance", "R", "Web scraping"]
+---
+
+**Challenge 1: Learn how to extract data in Excel files from a website and read into R**
+
+
+**Challenge 2: Track investor sentiment through fund flows**
+
+
+The [**Swedish Investment Fund Association (Fondbolagens förening)**](https://www.fondbolagen.se/) provides valuable statistics on fund flows, including data on net purchases, redemptions, and total assets under management (AUM) across different types of funds in Sweden. Scraping data from their website gives you a rich dataset for financial analysis. My idea is to learn how to scrape this data from their webpage, clean it and visualise it. My aim is to leverage the data in order to track investor sentiment through the fund flows by: visualising how inflows and outflows into different fund types (equity, bond, money market) fluctuate in response to global market events, such as interest rate changes.
+
+Previously I have always downloaded files manually instead of scraping. Hence, he challange for me here is to learn how to scrape the Excel-files containing the data from the web using the following three steps:
+
+1. Identify the URLs of the Excel Files: Extract the URLs of the downloadable Excel files from the webpage. These files are updated monthly, so automating the process saves time.
+
+2. Download the Excel Files: Automate the download of the Excel files using R packages like [**rvest**](https://rvest.tidyverse.org/) (for scraping) and [**httr**](https://httr.r-lib.org/) (for handling HTTP requests).
+
+3. Read and Process the Excel Files: Once the files are downloaded, I use [**readxl**](https://readxl.tidyverse.org/) to load the content of the Excel files into R for analysis.
+
+```{r setup and set wd, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Set work directory on PC
+setwd("/Users/ruzicagajic/Documents/Data Scientist/r-website/r-website/content/blog/2024-10-25 Web-scraping fund flow data using R")
+
+```
+
+# 1. Install necessary packages:
+```{r load packages}
+
+# 1. Install necessary packages
+install.packages("rvest")
+install.packages("httr")
+install.packages("readxl")
+
+```
+
+# 2. Scrape Excel file URLs and download files:
+```{r scrape and download}
+library(rvest)
+library(httr)
+
+# Step 1: Define the webpage URL
+url <- "https://www.fondbolagen.se/fakta_index/statistik/"
+
+# Step 2: Read the HTML of the page
+webpage <- read_html(url)
+
+# Step 3: Find the links to the Excel files (assuming they are links with ".xls" or ".xlsx" in the href attribute)
+excel_links <- webpage %>%
+  html_nodes("a") %>%
+  html_attr("href") %>%
+  .[grepl("\\.xls|\\.xlsx", .)]  # Filter for Excel files
+
+# Step 4: Download each Excel file
+for (link in excel_links) {
+  file_name <- basename(link) # Extract the file name
+  download.file(link, file_name, mode = "wb")  # Save the file locally
+}
+
+```
+
+# 3. Read and analyse the Excel files:
+```{r read and analyse}
+library(readxl)
+
+# Step 5: List downloaded Excel files
+excel_files <- list.files(pattern = "\\.xls|\\.xlsx")
+
+# Step 6: Loop through each Excel file and read data
+for (file in excel_files) {
+  data <- read_excel(file)
+  print(head(data))  # Print first few rows to inspect the content
+
+}
+
+```

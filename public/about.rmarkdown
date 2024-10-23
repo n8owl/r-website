@@ -1,0 +1,16 @@
+---
+date: "2021-02-04"
+title: About
+---
+
+<div style="display:flex; justify-content:center;">
+<img src="/about/rosie.png" alt="alt text" style="width: 240px;">
+</div>
+
+My name is Ruzica Gajic and I work in finance in Stockholm, Sweden. This is my personal blog about Data Science, R, Python, LLMs, AI etc with applications mostly focused within finance. Needless to say, opinions, analysis and conclusions are my own and no one elses. The work with all posts has been done outside work hours. With this blog I want to acheive two things. First, I want to keep my newly acquired skills fresh and dig deeper into areas of interest. Hence, I will be posting regularly about a topic I want to learn more about or that I find interesting in some way. Second, I want to have fun :) I love what I do and I'm a curious person and keen learner by nature, so keeping myself challenged intellectually is something I enjoy (to a certain extent of course, I also have a family and friends that I love to spend time with).
+
+I would like to ask you for a big favour. Please do not e-mail me asking for any files, code etc. I have shared as much material as I am willing to share in my posts. It is my intention that all details needed to carry out the analysis or implement the models I discuss are included in the posts. I intend to leave proper references to the sources that provided guidance. Of course, if you spot inaccuracies or are missing a reference to a source (broken link etc) please let me know. Otherwise, I advise you to read again and try and keep trying. Google or ask chatgpt or codeium if you encounter a problem and I am sure you will find an answer that will help you out.
+
+The posts you’ll find here will mostly be in English, however Swedish might occur. Feel free to contact me by [**LinkedIn**](https://www.linkedin.com/in/ruzica-gajic/).
+
+This website was created using the R [**blogdown**](https://github.com/rstudio/blogdown) package. I found the article on [**www.storybench.org**](https://www.storybench.org/how-to-build-a-website-with-blogdown-in-r/) very useful when setting up the infrastructure for my website. The theme was forked from [@LukasJoswiak/etch](https://github.com/LukasJoswiak/etch) and later modified by me to better suit my needs. The website is still under construction. I started this website in 2021 but then had to pause due to personal reasons, but I am back since 2024.

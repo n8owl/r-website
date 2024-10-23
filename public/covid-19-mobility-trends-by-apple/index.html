@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="This is my personal blog">
+  
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/style.min.css">
+
+  <title>Custom COVID-19 mobility trends by Apple</title>
+  
+  
+</head><body><header id="banner">
+    <h2><a href="/">Ruzica Gajic</a></h2>
+    <nav>
+        <ul>
+            <li>
+                <a href="/" title="blog">blog</a>
+            </li><li>
+                <a href="/about/" title="about">about</a>
+            </li><li>
+                <a href="/resources/" title="resources">resources</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main id="content">
+<article>
+  <header id="post-header">
+    <h1>COVID-19 mobility trends by Apple</h1>
+
+    
+      <div class="blog-subheader">
+        <div>
+          
+            <span>5 February, 2021</span>
+            
+          </div>
+
+          <div class="has-dot">
+            <a class="link" href="https://www.linkedin.com/in/ruzica-gajic/" target="_blank">
+              Ruzica Gajic
+            </a>
+          </div>
+
+          <div class="has-dot">3 min read</div>
+          <div class="tags">
+            
+              <span class="tag">COVID-19</span>
+            
+              <span class="tag">R</span>
+            
+              <span class="tag">Mobility</span>
+            
+          </div>
+      </div>
+    
+
+
+
+
+    
+  </header><p><strong>Challenge 1: Learn to use basic data visualisation with tidyverse</strong></p>
+<p><strong>Challenge 2: Get to know Apple&rsquo;s COVID-19 mobility trend data</strong></p>
+<p>During 2020 several new R-packages providing data relating to the global pandemic COVID-19 were released. One of these is <a href="https://covid19.apple.com/mobility"><strong>Apple&rsquo;s</strong></a> mobility trend data, which the tech-giant released to the public in March 2020. (Shortly after <a href="https://www.google.com/covid19/mobility/"><strong>Google</strong></a> also released their mobility trend data which I will dive into in an upcoming post).</p>
+<p>Most of my previous coding experience was mostly performed in order to wrangle data or use statistical methods to arrive to a numeric result that I would export to a csv-file that in turn would serve as an input to another program. Hence, my expereince of visualising data for presentations or reports is close to non-existent. The biggest challenge for me in this post is to learn to visualize data using <a href="https://rmarkdown.rstudio.com/"><strong>RMarkdown</strong></a> and the package <a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a>.</p>
+<p>The mobility trend data from both Apple and Google is available in the R <a href="https://github.com/Covid19R/covid19mobility"><strong>covid19mobility</strong></a> package. Apple&rsquo;s data is published daily and &ldquo;reflects requests for directions in Apple Maps&rdquo; since 13 January 2020 for countries, cities and subregions.</p>
+<p>I start by loading the data:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Load Apple&#39;s country and city data and add it to a data frame</span>
+<span class="n">df_apple_country</span> <span class="o">&lt;-</span> <span class="nf">refresh_covid19mobility_apple_country</span><span class="p">()</span>
+<span class="n">df_apple_city</span> <span class="o">&lt;-</span> <span class="nf">refresh_covid19mobility_apple_city</span><span class="p">()</span>
+
+<span class="c1"># Use the code below to load Apple&#39;s mobilty trend data for subregions of countries to a data frame</span>
+<span class="c1"># I will be using the data on subregions in a future post.</span>
+<span class="c1"># df_apple_subregion &lt;- refresh_covid19mobility_apple_subregion()</span></code></pre></div>
+<p>Then I assign values to variables in order to faciitate the process of altering the city or country of interest:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Assign the country/city/region you are interested in to variables</span>
+<span class="n">country</span> <span class="o">&lt;-</span> <span class="s">&#34;Sweden&#34;</span>
+<span class="n">countries</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="s">&#34;Norway&#34;</span><span class="p">,</span> <span class="s">&#34;Denmark&#34;</span><span class="p">)</span>
+<span class="n">cities</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Stockholm&#34;</span><span class="p">,</span> <span class="s">&#34;Oslo&#34;</span><span class="p">,</span> <span class="s">&#34;Copenhagen&#34;</span><span class="p">)</span>
+
+<span class="c1"># Assign the start and end date of the data to variables for use in captions</span>
+<span class="n">start</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">df_apple_country</span><span class="o">$</span><span class="n">date</span><span class="p">))</span>
+<span class="n">end</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="nf">max</span><span class="p">(</span><span class="n">df_apple_country</span><span class="o">$</span><span class="n">date</span><span class="p">))</span>
+</code></pre></div><p>Next, I create a custom theme for all text that I include in my plots:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">my_text_theme</span> <span class="o">&lt;-</span> <span class="nf">theme</span><span class="p">(</span>
+  <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">family</span> <span class="o">=</span> <span class="s">&#34;Helvetica&#34;</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&#34;bold&#34;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="m">15</span><span class="p">)),</span>
+  <span class="n">plot.subtitle</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">family</span> <span class="o">=</span> <span class="s">&#34;Helvetica&#34;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="m">10</span><span class="p">)),</span>
+  <span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;top&#34;</span><span class="p">,</span>
+  <span class="n">legend.title</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(),</span>
+  <span class="n">legend.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">family</span> <span class="o">=</span> <span class="s">&#34;Helvetica&#34;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s">&#34;black&#34;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="m">10</span><span class="p">)),</span>
+  <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">family</span> <span class="o">=</span> <span class="s">&#34;Helvetica&#34;</span><span class="p">,</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;black&#34;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="m">10</span><span class="p">)))</span>
+
+<span class="nf">theme_set</span><span class="p">(</span><span class="n">my_text_theme</span><span class="p">)</span>
+</code></pre></div><p>The data is very easy to use.</p>
+<ol>
+<li>I start by filtering out the mobility trend data for the country Sweden.</li>
+<li>Then I add a mobility indicator based on the string variable &lsquo;data_type&rsquo;.</li>
+<li>I sort the data by the new variable &lsquo;mobility_indicator&rsquo;.</li>
+<li>Finally, I visualise Apple&rsquo;s three mobility trend indicators (driving, public transport and walking) for Sweden in a plot.</li>
+</ol>
+<p>I notice quite a big increase in driving during the summer months:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot1</span> <span class="o">&lt;-</span> <span class="n">df_apple_country</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">location</span> <span class="o">%in%</span> <span class="n">country</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="m">100-1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">mobility_indicator</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+  <span class="n">my_text_theme</span> <span class="o">+</span>
+  
+  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span><span class="o">::</span><span class="nf">date_format</span><span class="p">(</span><span class="s">&#34;%d %b %Y&#34;</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;#003f5c&#34;</span><span class="p">,</span> <span class="s">&#34;#bc5090&#34;</span><span class="p">,</span> <span class="s">&#34;#ffa600&#34;</span><span class="p">))</span> <span class="o">+</span>
+ 
+  <span class="nf">labs</span><span class="p">(</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Apple&#39;s mobility index for&#34;</span><span class="p">,</span> <span class="n">country</span><span class="p">),</span>
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Percentage change in routing requests since&#34;</span><span class="p">,</span> <span class="nf">as.character</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#34;%d %B %Y&#34;</span><span class="p">)),</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="s">&#34;Source: Apple, https://covid19.apple.com/mobility&#34;</span><span class="p">,</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;&#34;</span>
+  <span class="p">)</span>
+
+<span class="n">plot1</span>
+</code></pre></div><p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+I found the following page on the website <a href="https://learnui.design/tools/data-color-picker.html#palette"><strong>www.learnui.design</strong></a> very useful when searching for colours to use in the plots (that both work well with color-blindness and look good in both light and dark theme).</p>
+<p>Next, I want to compare the mobility indicators for Sweden to those of neighboring Denmark and Norway. I use facetting in order to visualise the individual plots for each country stacked on top of one another:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot2</span> <span class="o">&lt;-</span> <span class="n">df_apple_country</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">location</span> <span class="o">%in%</span> <span class="n">countries</span><span class="p">)</span> <span class="o">%&gt;%</span>   <span class="c1"># filter using the list of countries</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="m">100</span> <span class="m">-1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">mobility_indicator</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+  <span class="n">my_text_theme</span> <span class="o">+</span>
+  
+  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span><span class="o">::</span><span class="nf">date_format</span><span class="p">(</span><span class="s">&#34;%b %y&#34;</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;#003f5c&#34;</span><span class="p">,</span> <span class="s">&#34;#bc5090&#34;</span><span class="p">,</span> <span class="s">&#34;#ffa600&#34;</span><span class="p">))</span> <span class="o">+</span>
+
+  <span class="nf">labs</span><span class="p">(</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Comparing Apple&#39;s mobility index for&#34;</span><span class="p">,</span> <span class="n">countries[1]</span><span class="p">,</span> <span class="s">&#34;to other countries&#34;</span><span class="p">),</span>
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Percentage change in routing requests since&#34;</span><span class="p">,</span> <span class="nf">as.character</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#34;%d %B %Y&#34;</span><span class="p">)),</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="s">&#34;Source: Apple, https://covid19.apple.com/mobility&#34;</span><span class="p">,</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;&#34;</span>
+  <span class="p">)</span> <span class="o">+</span> 
+  
+  <span class="nf">facet_grid</span><span class="p">(</span><span class="n">rows</span> <span class="o">=</span> <span class="nf">vars</span><span class="p">(</span><span class="n">location</span><span class="p">))</span> <span class="o">+</span> <span class="c1"># facet by rows</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">strip.placement</span> <span class="o">=</span> <span class="s">&#34;outside&#34;</span><span class="p">)</span>
+
+<span class="n">plot2</span>
+</code></pre></div><p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Next, instead of comparing three plots for each country, I want to compare three plots for each mobility indicator. I facet by columns (instead of by rows as above):</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot3</span> <span class="o">&lt;-</span> <span class="n">df_apple_country</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">location</span> <span class="o">%in%</span> <span class="n">countries</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="m">100</span> <span class="m">-1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">location</span><span class="p">))</span> <span class="o">+</span>  <span class="c1"># I change the color aesthetic to &#39;location&#39;</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+  <span class="n">my_text_theme</span> <span class="o">+</span>
+  
+  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span><span class="o">::</span><span class="nf">date_format</span><span class="p">(</span><span class="s">&#34;%b %y&#34;</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;#003f5c&#34;</span><span class="p">,</span> <span class="s">&#34;#bc5090&#34;</span><span class="p">,</span> <span class="s">&#34;#ffa600&#34;</span><span class="p">))</span> <span class="o">+</span>
+
+  <span class="nf">labs</span><span class="p">(</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Comparing Apple&#39;s mobility index for&#34;</span><span class="p">,</span> <span class="n">countries[1]</span><span class="p">,</span> <span class="s">&#34;to other countries&#34;</span><span class="p">),</span>
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Percentage change in routing requests since&#34;</span><span class="p">,</span> <span class="nf">as.character</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#34;%d %B %Y&#34;</span><span class="p">)),</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="s">&#34;Source: Apple, https://covid19.apple.com/mobility&#34;</span><span class="p">,</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;&#34;</span>
+  <span class="p">)</span> <span class="o">+</span> 
+  
+  <span class="nf">facet_grid</span><span class="p">(</span><span class="n">cols</span> <span class="o">=</span> <span class="nf">vars</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">))</span> <span class="o">+</span> <span class="c1"># facet by columns</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">strip.placement</span> <span class="o">=</span> <span class="s">&#34;outside&#34;</span><span class="p">)</span>
+
+<span class="n">plot3</span>
+</code></pre></div><p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Next, I am curious to see whether the big uptick in driving during the summer of 2020 in Sweden was concentrated to Sweden&rsquo;s capital Stockholm. Instead of using the same aesthetics as for the plot with data for Sweden, I play around a bit. Turns out there was no increase of driving in the Swedish capital during the summer:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot4</span> <span class="o">&lt;-</span> <span class="n">df_apple_city</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">location</span> <span class="o">%in%</span> <span class="n">cities[1]</span><span class="p">)</span> <span class="o">%&gt;%</span>   <span class="c1"># filter using the first city in the list &#39;cities&#39;</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="m">100-1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">mobility_indicator</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_grey</span><span class="p">()</span> <span class="o">+</span>   <span class="c1"># trying another theme</span>
+  <span class="n">my_text_theme</span> <span class="o">+</span>
+  
+  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span><span class="o">::</span><span class="nf">date_format</span><span class="p">(</span><span class="s">&#34;%d %b %Y&#34;</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_color_viridis_d</span><span class="p">(</span><span class="n">option</span> <span class="o">=</span> <span class="s">&#34;D&#34;</span><span class="p">)</span> <span class="o">+</span>   <span class="c1"># trying another color, 5 options A - E are available</span>
+  
+  <span class="nf">labs</span><span class="p">(</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Apple&#39;s mobility index for&#34;</span><span class="p">,</span> <span class="n">cities[1]</span><span class="p">),</span>
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Percentage change in routing requests since&#34;</span><span class="p">,</span> <span class="nf">as.character</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#34;%d %B %Y&#34;</span><span class="p">)),</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="s">&#34;Source: Apple, https://covid19.apple.com/mobility&#34;</span><span class="p">,</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;&#34;</span>
+  <span class="p">)</span>
+
+<span class="n">plot4</span>
+</code></pre></div><p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+I recommend that you check out the documentation of the package ggplot2 included in tidyverse, particularly the &lsquo;Scales&rsquo; and &lsquo;Aesthetics&rsquo; sections on the webpage <a href="https://ggplot2.tidyverse.org/reference/"><strong>www.ggplot2.tidyverse.org/</strong></a>. ggplot2 is a system for declaratively creating graphics, based on <a href="http://vita.had.co.nz/papers/layered-grammar.pdf"><strong>The Grammar of Graphics</strong></a>.</p>
+<p>Next, I want to compare the mobility trend indicators for Sweden to the three biggest cities in the country: 1. Stockholm, 2. Gothenburg and 3. Malmö. Oddly, the city Malmö is spelled using the Swedish letter &ldquo;ö&rdquo; in the Apple data, while Gothenburg (in Swedish: Göteborg) is spelled in English &ldquo;Gothenburg&rdquo;. Interesting, I wonder why that is? I also notice that there is no up swing in the mobility indicator &lsquo;driving&rsquo; for any of the three cities, indicating that the big uptick in driving was performed outside the three biggest cities:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">sweden_cities</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Sweden&#34;</span><span class="p">,</span> <span class="s">&#34;Stockholm&#34;</span><span class="p">,</span> <span class="s">&#34;Gothenburg&#34;</span><span class="p">,</span> <span class="s">&#34;Malmö&#34;</span><span class="p">)</span>
+
+<span class="n">join_country</span> <span class="o">&lt;-</span> <span class="n">df_apple_country</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">7</span><span class="p">,</span> <span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span>
+
+<span class="n">join_city</span> <span class="o">&lt;-</span> <span class="n">df_apple_city</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">7</span><span class="p">,</span> <span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span>
+
+<span class="n">joined_country_city</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">join_country</span><span class="p">,</span> <span class="n">join_city</span><span class="p">)</span>
+
+<span class="c1"># To change plot order of facet wrap, change the order of varible levels with factor()</span>
+<span class="n">joined_country_city</span><span class="o">$</span><span class="n">location</span> <span class="o">&lt;-</span> <span class="nf">factor</span><span class="p">(</span><span class="n">joined_country_city</span><span class="o">$</span><span class="n">location</span><span class="p">,</span> <span class="n">levels</span> <span class="o">=</span> <span class="n">sweden_cities</span><span class="p">)</span>
+
+<span class="c1"># Create facet wrap first with &#34;old&#34; order</span>
+<span class="n">plot5</span> <span class="o">&lt;-</span> <span class="n">joined_country_city</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">location</span> <span class="o">%in%</span> <span class="n">sweden_cities</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="m">100</span> <span class="m">-1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">mobility_indicator</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+  <span class="n">my_text_theme</span> <span class="o">+</span>
+  
+  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span><span class="o">::</span><span class="nf">date_format</span><span class="p">(</span><span class="s">&#34;%b %y&#34;</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;#003f5c&#34;</span><span class="p">,</span> <span class="s">&#34;#bc5090&#34;</span><span class="p">,</span> <span class="s">&#34;#ffa600&#34;</span><span class="p">))</span> <span class="o">+</span>
+
+  <span class="nf">labs</span><span class="p">(</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Comparing Apple&#39;s mobility index for&#34;</span><span class="p">,</span> <span class="n">sweden_cities[1]</span><span class="p">,</span> <span class="s">&#34;and it&#39;s cities&#34;</span><span class="p">),</span>
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Percentage change in routing requests since&#34;</span><span class="p">,</span> <span class="nf">as.character</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#34;%d %B %Y&#34;</span><span class="p">)),</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="s">&#34;Source: Apple, https://covid19.apple.com/mobility&#34;</span><span class="p">,</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;&#34;</span>
+  <span class="p">)</span> <span class="o">+</span> 
+
+  <span class="nf">facet_wrap</span><span class="p">(</span><span class="n">facets</span> <span class="o">=</span> <span class="nf">vars</span><span class="p">(</span><span class="n">location</span><span class="p">))</span>
+  
+<span class="c1"># Add new order to facet wrap</span>
+<span class="n">plot5</span> <span class="o">+</span> <span class="nf">facet_wrap</span><span class="p">(</span><span class="o">~</span> <span class="n">location</span><span class="p">)</span>
+</code></pre></div><p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Next, I want to compare Stockholm to the capitals of Denmark (Copenhagen) and Norway (Oslo). I want to visualise both all three capitals and countries in one single plot:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">capital_and_country</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Stockholm&#34;</span><span class="p">,</span> <span class="s">&#34;Copenhagen&#34;</span><span class="p">,</span> <span class="s">&#34;Oslo&#34;</span><span class="p">,</span> <span class="s">&#34;Sweden&#34;</span><span class="p">,</span> <span class="s">&#34;Denmark&#34;</span><span class="p">,</span> <span class="s">&#34;Norway&#34;</span><span class="p">)</span>
+
+<span class="n">join_country</span> <span class="o">&lt;-</span> <span class="n">df_apple_country</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">7</span><span class="p">,</span> <span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span>
+
+<span class="n">join_city</span> <span class="o">&lt;-</span> <span class="n">df_apple_city</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">mobility_indicator</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;driving&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Driving&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;transit&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Public transport&#34;</span><span class="p">,</span>
+    <span class="nf">str_detect</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="s">&#34;walking&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;Walking&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">7</span><span class="p">,</span> <span class="n">mobility_indicator</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="n">mobility_indicator</span><span class="p">)</span>
+
+<span class="n">joined_country_city</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">join_country</span><span class="p">,</span> <span class="n">join_city</span><span class="p">)</span>
+
+<span class="c1"># To change plot order of facet wrap, change the order of varible levels with factor()</span>
+<span class="n">joined_country_city</span><span class="o">$</span><span class="n">location</span> <span class="o">&lt;-</span> <span class="nf">factor</span><span class="p">(</span><span class="n">joined_country_city</span><span class="o">$</span><span class="n">location</span><span class="p">,</span> <span class="n">levels</span> <span class="o">=</span> <span class="n">capital_and_country</span><span class="p">)</span>
+
+<span class="c1"># Create facet wrap first with &#34;old&#34; order</span>
+<span class="n">plot6</span> <span class="o">&lt;-</span> <span class="n">joined_country_city</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">location</span> <span class="o">%in%</span> <span class="n">capital_and_country</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="m">100</span> <span class="m">-1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">mobility_indicator</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+  <span class="n">my_text_theme</span> <span class="o">+</span>
+  
+  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span><span class="o">::</span><span class="nf">date_format</span><span class="p">(</span><span class="s">&#34;%b %y&#34;</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;#003f5c&#34;</span><span class="p">,</span> <span class="s">&#34;#bc5090&#34;</span><span class="p">,</span> <span class="s">&#34;#ffa600&#34;</span><span class="p">))</span> <span class="o">+</span>
+
+  <span class="nf">labs</span><span class="p">(</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Comparing Apple&#39;s mobility index for some countries and capitals&#34;</span><span class="p">),</span>
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="nf">paste</span><span class="p">(</span><span class="s">&#34;Percentage change in routing requests since&#34;</span><span class="p">,</span> <span class="nf">as.character</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#34;%d %B %Y&#34;</span><span class="p">)),</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="s">&#34;Source: Apple, https://covid19.apple.com/mobility&#34;</span><span class="p">,</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;&#34;</span>
+  <span class="p">)</span> <span class="o">+</span> 
+
+  <span class="nf">facet_wrap</span><span class="p">(</span><span class="n">facets</span> <span class="o">=</span> <span class="nf">vars</span><span class="p">(</span><span class="n">location</span><span class="p">))</span>
+  
+<span class="c1"># Add new order to facet wrap</span>
+<span class="n">plot6</span> <span class="o">+</span> <span class="nf">facet_wrap</span><span class="p">(</span><span class="o">~</span> <span class="n">location</span><span class="p">)</span> 
+</code></pre></div><p><img src="/blog/2021-02-05 COVID-19 mobility trends by Apple/covid19_mobility_data_apple_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>That was all for now! Omg, there were so many more possibilities available for tweaking plots when using ggplot2 in tidyverse than I expected. I really had to spend quite some time online reading documentation and checking examples. The possibilites are truely immense so please see the examples above as a glimpse into the world of tidy! I can warmly recommend the folowing page on the website <a href="https://datacarpentry.org/R-ecology-lesson/04-visualization-ggplot2"><strong>www.datacarpentry.org</strong></a> that I found particularly useful.</p>
+</article>
+
+        </main><footer id="footer">
+    Copyright © 2021 Ruzica Gajic
+</footer>
+</body>
+</html>
