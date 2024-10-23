@@ -11,7 +11,7 @@ tags: ["Finance", "R", "Web scraping"]
 **Challenge 2: Track investor sentiment through fund flows**
 
 
-The [**Swedish Investment Fund Association (Fondbolagens förening)**](https://www.fondbolagen.se/) provides valuable statistics on fund flows, including data on net purchases, redemptions, and total assets under management (AUM) across different types of funds in Sweden. Scraping data from their website gives you a rich dataset for financial analysis. My idea is to learn how to scrape this data from their webpage, clean it and visualise it. My aim is to leverage the data in order to track investor sentiment through the fund flows by: visualising how inflows and outflows into different fund types (equity, bond, money market) fluctuate in response to global market events, such interest rate changes.
+The [**Swedish Investment Fund Association (Fondbolagens förening)**](https://www.fondbolagen.se/) provides valuable statistics on fund flows, including data on net purchases, redemptions, and total assets under management (AUM) across different types of funds in Sweden. Scraping data from their website gives you a rich dataset for financial analysis. My idea is to learn how to scrape this data from their webpage, clean it and visualise it. My aim is to leverage the data in order to track investor sentiment through the fund flows by: visualising how inflows and outflows into different fund types (equity, bond, money market) fluctuate in response to global market events, such as interest rate changes.
 
 Previously I have always downloaded files manually instead of scraping. Hence, he challange for me here is to learn how to scrape the Excel-files containing the data from the web using the following three steps:
 
